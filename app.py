@@ -7,9 +7,6 @@ import streamlit as st
 from openai import OpenAI
 import tools
 
-# Initialize the OpenAI client securely
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
 # =====================================================================
 # STREAMLIT UI LAYOUT
 # =====================================================================
@@ -17,15 +14,35 @@ st.set_page_config(page_title="Global Travel Agent", page_icon="✈️", layout=
 st.title("✈️ Global Travel & Expense Agent")
 st.subheader("Your AI Co-Pilot for International Trip Planning")
 
-# --- SIDEBAR CLEAR BUTTON ---
+# --- SIDEBAR CONTROLS ---
 with st.sidebar:
     st.header("Controls")
+    
+    # BONUS FEATURE: Interactive Visitor API Key Input Box
+    user_api_key = st.text_input(
+        "🔑 Enter Your OpenAI API Key (Optional)",
+        type="password",
+        help="If you leave this blank, the app will safely fall back to the developer's default credit key."
+    )
+    
+    st.markdown("---")
     if st.button("Cursor Reset 🧹 Clear Chat History"):
         if "messages" in st.session_state:
             del st.session_state["messages"]
         st.rerun()
 
-# FIXED STEP 2: Localized System Persona for Nigeria / WAT Context
+# --- OPTIMIZED CREDENTIAL EVALUATION ENGINE ---
+# Check if the user entered a key in the text field. If not, use the hidden background env secret.
+active_api_key = user_api_key if user_api_key.strip() else os.environ.get("OPENAI_API_KEY")
+
+if not active_api_key:
+    st.error("❌ Configuration Error: No valid OpenAI API key detected. Please paste an active key into the sidebar to proceed.")
+    st.stop()
+
+# Initialize the OpenAI client securely using the dynamically selected key instance
+client = OpenAI(api_key=active_api_key)
+
+# Localized System Persona for Nigeria / WAT Context
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
