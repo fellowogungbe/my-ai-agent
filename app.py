@@ -19,7 +19,7 @@ with st.sidebar:
     st.header("Controls")
     
     # BONUS FEATURE: Interactive Visitor API Key Input Box
-    active_api_key = st.text_input(
+    user_api_key = st.text_input(
     "🔑 Enter Your OpenAI API Key", 
     type="password",
     help="Your API key is processed securely and is never stored. A valid key is required to run the agent."
@@ -33,7 +33,7 @@ with st.sidebar:
 
 # --- OPTIMIZED CREDENTIAL EVALUATION ENGINE ---
 # Check if the user entered a key in the text field. If not, use the hidden background env secret.
-active_api_key = user_api_key if user_api_key.strip() else os.environ.get("OPENAI_API_KEY")
+active_api_key = user_api_key if user_api_key and user_api_key.strip() else None
 
 if not active_api_key:
     # 1. Shows a professional info box instead of the red error banner
