@@ -19,11 +19,11 @@ with st.sidebar:
     st.header("Controls")
     
     # BONUS FEATURE: Interactive Visitor API Key Input Box
-    user_api_key = st.text_input(
-        "🔑 Enter Your OpenAI API Key (Optional)",
-        type="password",
-        help="If you leave this blank, the app will safely fall back to the developer's default credit key."
-    )
+    active_api_key = st.text_input(
+    "🔑 Enter Your OpenAI API Key", 
+    type="password",
+    help="Your API key is processed securely and is never stored. A valid key is required to run the agent."
+)
     
     st.markdown("---")
     if st.button("Cursor Reset 🧹 Clear Chat History"):
@@ -36,8 +36,12 @@ with st.sidebar:
 active_api_key = user_api_key if user_api_key.strip() else os.environ.get("OPENAI_API_KEY")
 
 if not active_api_key:
-    st.error("❌ Configuration Error: No valid OpenAI API key detected. Please paste an active key into the sidebar to proceed.")
+    # 1. Shows a professional info box instead of the red error banner
+    st.info("👋 **Welcome to the Global Travel & Expense Agent!** To test the application's AI capabilities, please enter your OpenAI API key in the sidebar controls.")
+    
+    # 2. Keeps the app safely paused until they enter a key
     st.stop()
+
 
 # Initialize the OpenAI client securely using the dynamically selected key instance
 client = OpenAI(api_key=active_api_key)
